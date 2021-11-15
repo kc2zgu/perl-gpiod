@@ -44,12 +44,12 @@ gpiod_read_lines(chip_ptr, ...)
     struct gpiod_line_bulk lines;
     struct gpiod_line_request_config config;
 
-    values = malloc(sizeof(*values) * num_lines);
-    offsets = malloc(sizeof(*offsets) * num_lines);
+    Newx(values, num_lines, int);
+    Newx(offsets, num_lines, unsigned int);
 
     for (int i=0; i<num_lines; i++)
     {
-        offsets[i] = SvNV(ST(i + 1));
+        offsets[i] = SvUV(ST(i + 1));
     }
 
     if (gpiod_chip_get_lines(chip, offsets, num_lines, &lines) == 0)
@@ -64,11 +64,11 @@ gpiod_read_lines(chip_ptr, ...)
                 EXTEND(SP, items);
                 for (int i=0; i<num_lines; i++)
                 {
-                    PUSHs(sv_2mortal(newSVnv(values[i])));
+                    PUSHs(sv_2mortal(newSViv(values[i])));
                 }
             }
         }
     }
 
-    free(values);
-    free(offsets);
+    Safefree(values);
+    Safefree(offsets);
