@@ -74,4 +74,18 @@ sub read_gpios {
     }
 }
 
+sub write_gpios {
+    my $self = shift;
+    my $lines = shift;
+
+    my @lines_values;
+    for my $line(sort {$a<=>$b} map{/line(\d+)/ && $1} keys %$lines)
+    {
+        push @lines_values, $line, $lines->{"line$line"};
+    }
+    gpiod_write_lines($self->{gpiod_chip}, @lines_values);
+
+    Future->done;
+}
+
 1;
