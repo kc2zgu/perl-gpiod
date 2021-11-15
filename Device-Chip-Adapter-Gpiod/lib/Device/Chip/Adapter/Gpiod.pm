@@ -45,4 +45,33 @@ sub make_protocol {
     }
 }
 
+sub list_gpios {
+    my $self = shift;
+
+    my $num_lines = gpiod_num_lines($self->{gpiod_chip});
+    return map {"line$_"} (0..$num_lines-1);
+}
+
+sub read_gpios {
+    my $self = shift;
+    my $lines = shift;
+
+    my @lines = map {/line(\d+)/ && $1} @$lines;
+    my @values = gpiod_read_lines($self->{gpiod_chip}, @lines);
+
+    if (@values == @lines)
+    {
+        my %return;
+        for (my $i=0; $i<=$#lines; $i++)
+        {
+            $return{$lines->[$i]} = $values[$i];
+        }
+
+        Future->done(\%return);
+    } else
+    {
+        Future->done(undef);
+    }
+}
+
 1;
