@@ -5,7 +5,7 @@ use base qw(Device::Chip::Adapter);
 use Carp;
 
 # ABSTRACT: Device::Chip::Adapter implementation for Linux GPIO character devices
-our $VERSION = 'v0.1';
+our $VERSION = 'v0.1.0';
 
 require XSLoader;
 XSLoader::load();
